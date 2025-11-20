@@ -56,8 +56,8 @@ int main()
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-    Shader firstShader("C:/Users/Eli/EngineProject/shaders/basic.vert","C:/Users/Eli/EngineProject/shaders/color1.frag");
-    Shader secondShader("C:/Users/Eli/EngineProject/shaders/basic.vert","C:/Users/Eli/EngineProject/shaders/color2.frag");
+    Shader firstShader("C:/Users/Eli/EngineProject/shaders/basic1.vert","C:/Users/Eli/EngineProject/shaders/color1.frag");
+    Shader secondShader("C:/Users/Eli/EngineProject/shaders/basic2.vert","C:/Users/Eli/EngineProject/shaders/color2.frag");
 
     //Shader firstShader("shaders/basic.vert","shaders/color1.frag");
     //Shader secondShader("shaders/basic.vert","shaders/color2.frag");
