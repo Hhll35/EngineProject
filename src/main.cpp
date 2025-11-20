@@ -1,6 +1,7 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "shader.h"
 
 using namespace std; 
 
@@ -13,39 +14,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 int main()
 {
-
-    const char *vertexShaderSource = "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "}\0";
-
-    const char *vertexShaderSource2 = "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, -aPos.y, aPos.z, 1.0);\n"
-    "}\0";
-
-
-
-    const char *fragmentShaderSource = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n"
-    "}\n\0";
-
-    const char *fragmentShaderSource2 = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vec4(0.0f, 1.0f, 0.5f, 1.0f);\n"
-    "}\n\0";
-
-
-
     // Initialize GLFW (the library that handles windows & input)
     if (!glfwInit())
     {
@@ -88,50 +56,11 @@ int main()
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-    //Vertex shader compilation
-    unsigned int vertexShader;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
+    Shader firstShader("C:/Users/Eli/EngineProject/shaders/basic.vert","C:/Users/Eli/EngineProject/shaders/color1.frag");
+    Shader secondShader("C:/Users/Eli/EngineProject/shaders/basic.vert","C:/Users/Eli/EngineProject/shaders/color2.frag");
 
-    unsigned int vertexShader2;
-    vertexShader2 = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader2, 1, &vertexShaderSource2, NULL);
-    glCompileShader(vertexShader2);
-
-    //Fragment shader compilation
-    unsigned int fragmentShader;
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-
-    unsigned int fragmentShader2;
-    fragmentShader2 = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader2, 1, &fragmentShaderSource2, NULL);
-    glCompileShader(fragmentShader2);
-
-    //creating shader program
-    unsigned int shaderProgram;
-    shaderProgram = glCreateProgram();
-
-    //attaching shaders to program
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    //second shader program
-    unsigned int shaderProgram2;
-    shaderProgram2 = glCreateProgram();
-
-    glAttachShader(shaderProgram2, vertexShader2);
-    glAttachShader(shaderProgram2, fragmentShader2);
-    glLinkProgram(shaderProgram2);
-
-    //delete shaders
-    glDeleteShader(vertexShader);
-    glDeleteShader(vertexShader2);
-    glDeleteShader(fragmentShader); 
-    glDeleteShader(fragmentShader2);
+    //Shader firstShader("shaders/basic.vert","shaders/color1.frag");
+    //Shader secondShader("shaders/basic.vert","shaders/color2.frag");
 
     // A simple triangle defined by three vertices
     float vertices1[] = {
@@ -186,13 +115,15 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
         
         //create first triangle with first shader program
-        glUseProgram(shaderProgram);
+        //glUseProgram(shaderProgram);
+        firstShader.use();
 
         glBindVertexArray(VAO[0]);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         //create second triangle with second shader program
-        glUseProgram(shaderProgram2);
+        //glUseProgram(shaderProgram2);
+        secondShader.use();
 
         glBindVertexArray(VAO[1]);
         glDrawArrays(GL_TRIANGLES, 0 ,3);
