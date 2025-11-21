@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cmath>
-#include <cstdlib>
+#include <stb_image.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <shader.h>
@@ -58,61 +58,45 @@ int main()
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-    Shader firstShader("C:/Users/Eli/EngineProject/shaders/basic1.vert","C:/Users/Eli/EngineProject/shaders/color1.frag");
-    Shader secondShader("C:/Users/Eli/EngineProject/shaders/basic2.vert","C:/Users/Eli/EngineProject/shaders/color2.frag");
+    Shader textureShader("C:/Users/Eli/EngineProject/shaders/basicVertex.vert","C:/Users/Eli/EngineProject/shaders/basicFrag.frag");
 
     //Shader firstShader("shaders/basic1.vert","shaders/color1.frag");
     //Shader secondShader("shaders/basic2.vert","shaders/color2.frag");
 
-    // A simple triangle defined by three vertices
-    float vertices1[] = {
-        -0.9f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,// left
-        -0.0f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f, // right
-        -0.45f, 0.5f, 0.0f,  0.0f, 0.0f, 1.0f  // top
+    float vertices[] = {
+         0.5f,  0.5f, 0.0f,  // top right
+         0.5f, -0.5f, 0.0f,  // bottom right
+        -0.5f, -0.5f, 0.0f,  // bottom left
+        -0.5f,  0.5f, 0.0f   // top left 
     };
 
-    float vertices2[] = {
-        0.0f,-0.5f,0.0f, //left
-        0.9f,-0.5f,0.0f, //right
-        0.45f,0.5f,0.0f //bottom
+    unsigned int indices[] = {
+        0,1,3,
+        1,2,3
     };
 
-    // float vertices[] = {
-    //      0.5f,  0.5f, 0.0f,  // top right
-    //      0.5f, -0.5f, 0.0f,  // bottom right
-    //     -0.5f, -0.5f, 0.0f,  // bottom left
-    //     -0.5f,  0.5f, 0.0f   // top left 
-    // };
 
-    //indices for rectangle
-    // unsigned int indices[] = {
-    //     0,1,3,
-    //     1,2,3
-    // };
-
-
-    unsigned int VAO[2], VBO[2];
-    glGenVertexArrays(2, VAO);
-    glGenBuffers(2,VBO);
+    unsigned int VAO, VBO,EBO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1,&EBO);
 
     //Bind first VAO and VBO
-    glBindVertexArray(VAO[0]);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO[0]);
+    glBindVertexArray(VAO);
 
-    //Vertex data
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices1), vertices1, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);	// Vertex attributes stay the same
-    glEnableVertexAttribArray(0);
-    //Color data
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
-    glEnableVertexAttribArray(1);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    //Bind second VAO and VBO
-    glBindVertexArray(VAO[1]);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO[1]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices2), vertices2, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);	// Vertex attributes stay the same
     glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glBindVertexArray(0);
+
 
     // Main render loop: runs until the user closes the window
     while (!glfwWindowShouldClose(window))
@@ -120,30 +104,12 @@ int main()
 
         glClearColor(0.42f, 0.55f, 0.63f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        
-        //create first triangle with first shader program
-        firstShader.use();
 
-        glBindVertexArray(VAO[0]);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        textureShader.use();
 
-        //create second triangle with second shader program
-
-        secondShader.use();
-
-        float timeValue = glfwGetTime();
-        float greenValue = sin(timeValue) / 1.0f + 0.5f;
-        float redValue = sin(timeValue) / 10.0f + 0.5f;
-        float blueValue = sin(timeValue) / 8.0f + 0.5f;
-        int vertexColorLocation = glGetUniformLocation(secondShader.ID,"ourColor");
-        glUniform4f(vertexColorLocation, redValue, greenValue, blueValue, 1.0f);
-
-        glBindVertexArray(VAO[1]);
-        glDrawArrays(GL_TRIANGLES, 0 ,3);
-
-        // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        // glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT, 0);
-        //glBindVertexArray(0);
+        glBindVertexArray(VAO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT, 0);
 
         // Swap the front and back buffers 
         // (This displays whatever was drawn in the previous frame)
