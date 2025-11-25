@@ -10,8 +10,8 @@
 
 #include <shader.h>
 #include <stb_image.h>
+#include <hex_converter.h>
 
-using namespace std; 
 
 // Callback function that gets called whenever the window is resized.
 // It updates the OpenGL viewport to match the new window dimensions.
@@ -25,7 +25,7 @@ int main()
     // Initialize GLFW (the library that handles windows & input)
     if (!glfwInit())
     {
-        cout << "Failed to initialize GLFW" << endl;
+        std::cout << "Failed to initialize GLFW" << std::endl;
         return -1;
     }
 
@@ -41,7 +41,7 @@ int main()
     GLFWwindow* window = glfwCreateWindow(800, 600, "Opengl Engine", NULL, NULL);
     if (window == NULL)
     {
-        cout << "Failed to open GLFW window" << endl;
+        std::cout << "Failed to open GLFW window" << std::endl;
         return -1;
     }
 
@@ -51,7 +51,7 @@ int main()
     // Initialize GLAD (loads all OpenGL function pointers)
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        cout << "Failed to initialize GLAD" << endl;
+        std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
 
@@ -173,11 +173,23 @@ int main()
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
 
+        //transformations
+        glm::mat4 trans = glm::mat4(1.0f);
+        //trans = glm::translate(trans, glm::vec3(-0.5f, -0.5f, 0.0f));
+        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+
+
+        //start rendering
         textureShader.use();
+
+        unsigned int transformLoc = glGetUniformLocation(textureShader.ID, "transform");
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
         glBindVertexArray(VAO);
         //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT, 0);
+
+
 
         // Swap the front and back buffers 
         // (This displays whatever was drawn in the previous frame)
