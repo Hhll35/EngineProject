@@ -34,6 +34,7 @@ float lastX =  800.0f / 2.0;
 float lastY =  600.0 / 2.0;
 float fov   =  45.0f;
 
+glm::vec3 coral(1.0f, 0.5f, 0.31f);
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
