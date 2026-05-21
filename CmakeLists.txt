@@ -27,11 +27,11 @@ add_executable(main ${CPP_SRC} ${C_SRC})
 # Include directories
 target_include_directories(main PRIVATE
     ${INC_DIR}
-    ${VENDOR_DIR}
+    ${VENDOR_DIR}/SDL3
 )
 
 # Library directory
-target_link_directories(main PRIVATE ${LIB_DIR})
+target_link_directories(main PRIVATE ${LIB_DIR}/SDL3)
 
 # Link libraries
-target_link_libraries(main PRIVATE glfw3dll)
+target_link_libraries(main PRIVATE SDL3)

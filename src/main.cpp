@@ -2,7 +2,7 @@
 #include <cmath>
 
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include <SDL3/SDL.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -69,22 +69,29 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    // Create a window (800x600). If creation fails, exit.
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Proteus Engine", NULL, NULL);
-    if (window == NULL)
-    {
-        std::cout << "Failed to open GLFW window" << std::endl;
-        return -1;
-    }
+    SDL_Init(SDL_INIT_VIDEO);
 
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    glfwSetCursorPosCallback(window, mouse_callback);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 4);
 
-    // Make the OpenGL context of the window current in this thread
-    glfwMakeContextCurrent(window);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+    SDL_Window* window = SDL_CreateWindow(
+        "Proteus Engine",
+        SCR_WIDTH,
+        SCR_HEIGHT,
+        SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE
+    );
+    
+    SDL_GLContext glContext = SDL_GL_CreateContext(window);
+
+    SDL_SetWindowRelativeMouseMode(window, true);
+
+    SDL_GL_MakeCurrent(window, glContext);
 
     // Initialize GLAD (loads all OpenGL function pointers)
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress))
     {
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
@@ -199,8 +206,17 @@ int main()
     TextureLoader specularMap("C:/Users/Eli/ProteusEngine/assets/specular.png");
     
     // Main render loop: runs until the user closes the window
-    while (!glfwWindowShouldClose(window))
+    
+    SDL_Event event;
+    
+    bool running = true;
+
+    while (running)
     {
+        while(SDL_PollEvent(&event))
+        {  
+            
+        }
 
         processInput(window);
 
